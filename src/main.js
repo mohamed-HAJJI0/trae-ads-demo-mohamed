@@ -18,6 +18,8 @@ const I18N = {
     skipAd: 'Skip Ad',
     skipAdActive: 'Skip Ad →',
     skipAdWait: (n) => `Skip Ad in ${n}s...`,
+    loading: 'Loading...',
+    adLoadError: 'Ad failed to load',
     back: '← Back',
     noAds: 'No .webp files found.\nAdd some to the /ads folder!',
     readCarefully: (n) => `Read carefully... ${n}`,
@@ -55,6 +57,8 @@ const I18N = {
     skipAd: '跳过广告',
     skipAdActive: '跳过广告 →',
     skipAdWait: (n) => `${n} 秒后可跳过...`,
+    loading: '加载中...',
+    adLoadError: '广告加载失败',
     back: '← 返回',
     noAds: '未找到 .webp 文件。\n请将广告图片添加到 /ads 文件夹!',
     readCarefully: (n) => `仔细阅读... ${n}`,
@@ -810,53 +814,92 @@ function renderOldAds(root) {
   const wrap = document.createElement('div');
   wrap.className = 'old-ads';
 
-  // Ad content
+  // Real-ad style skip button (top right) — disabled until image loads, then 5s countdown
+  const skip = document.createElement('button');
+  skip.className = 'ad-skip';
+  skip.disabled = true;
+  skip.textContent = t().loading;
+  wrap.appendChild(skip);
+
   if (adImages.length === 0) {
     const msg = document.createElement('div');
     msg.className = 'placeholder-msg';
     msg.textContent = t().noAds;
     wrap.appendChild(msg);
-  } else {
-    const img = document.createElement('img');
-    img.className = 'old-ads-image';
-    const chosen = adImages[Math.floor(Math.random() * adImages.length)];
-    img.src = chosen;
-    img.alt = 'Ad';
-    wrap.appendChild(img);
+    // No image to load — make the skip button immediately ready (no timer)
+    skip.textContent = t().skipAdActive;
+    skip.classList.add('ready');
+    skip.disabled = false;
+    skip.addEventListener('click', () => {
+      state.view = 'landing';
+      render();
+    });
+    root.appendChild(wrap);
+    return;
   }
 
-  // Real-ad style skip button (top right)
-  const skip = document.createElement('button');
-  skip.className = 'ad-skip';
-  skip.disabled = true;
+  // Loading spinner
+  const spinner = document.createElement('div');
+  spinner.className = 'ad-spinner';
+  spinner.innerHTML = `
+    <div class="ad-spinner-ring"></div>
+    <div class="ad-spinner-text">${t().loading}</div>
+  `;
+  wrap.appendChild(spinner);
 
-  let countdown = 5;
-  const updateSkipText = () => {
-    if (countdown > 0) {
-      skip.innerHTML = t().skipAdWait(countdown);
-    } else {
-      skip.textContent = t().skipAdActive;
-    }
+  // The ad image
+  const img = document.createElement('img');
+  img.className = 'old-ads-image';
+  img.alt = 'Ad';
+  img.style.display = 'none';
+  const chosen = adImages[Math.floor(Math.random() * adImages.length)];
+  img.src = chosen;
+  wrap.appendChild(img);
+
+  // Start the 5s countdown only after the image has actually loaded
+  let countdownInterval = null;
+  const startCountdown = () => {
+    let countdown = 5;
+    const updateSkipText = () => {
+      if (countdown > 0) {
+        skip.textContent = t().skipAdWait(countdown);
+      } else {
+        skip.textContent = t().skipAdActive;
+      }
+    };
+    updateSkipText();
+    countdownInterval = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        updateSkipText();
+      } else {
+        clearInterval(countdownInterval);
+        updateSkipText();
+        skip.classList.add('ready');
+        skip.disabled = false;
+      }
+    }, 1000);
   };
-  updateSkipText();
-  wrap.appendChild(skip);
-
-  const countdownInterval = setInterval(() => {
-    countdown--;
-    if (countdown > 0) {
-      updateSkipText();
-    } else {
-      clearInterval(countdownInterval);
-      updateSkipText();
-      skip.classList.add('ready');
-      skip.disabled = false;
-    }
-  }, 1000);
 
   skip.addEventListener('click', () => {
-    clearInterval(countdownInterval);
+    if (countdownInterval) clearInterval(countdownInterval);
     state.view = 'landing';
     render();
+  });
+
+  img.addEventListener('load', () => {
+    // Image loaded — reveal it, hide the spinner, start the timer
+    img.style.display = '';
+    spinner.remove();
+    startCountdown();
+  });
+
+  img.addEventListener('error', () => {
+    // Image failed — show an error message, still allow skipping
+    spinner.querySelector('.ad-spinner-text').textContent = t().adLoadError;
+    skip.textContent = t().skipAdActive;
+    skip.classList.add('ready');
+    skip.disabled = false;
   });
 
   root.appendChild(wrap);

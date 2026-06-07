@@ -196,6 +196,40 @@ html, body {
   background: #F0F0F0;
 }
 
+/* Loading spinner shown while the ad image is being fetched */
+.ad-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 5;
+  color: #FFFFFF;
+}
+
+.ad-spinner-ring {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: spinnerSpin 0.8s linear infinite;
+}
+
+.ad-spinner-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+@keyframes spinnerSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* ============================================
    NEW ADS MODE — BRAND THEMES
    ============================================ */
