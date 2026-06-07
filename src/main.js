@@ -26,8 +26,10 @@ const I18N = {
     gotItCorrect: 'You got it correct! 🏆',
     gotItWrong: 'You got it wrong 😅',
     gotIt: 'Got it',
-    continue: 'Continue →',
-    continueWait: (n) => `Wait ${n}s...`,
+    skip: 'Skip →',
+    skipWait: (n) => `Wait ${n}s...`,
+    couponCodeLabel: 'CODE',
+    couponExpiry: (days) => `Expires in ${days} days`,
     closingIn: (n) => `Auto-closing in ${n}...`,
     learnMore: 'Learn More →',
     brandLabels: {
@@ -60,8 +62,10 @@ const I18N = {
     gotItCorrect: '你答对了! 🏆',
     gotItWrong: '答错了 😅',
     gotIt: '明白了',
-    continue: '继续 →',
-    continueWait: (n) => `请等 ${n} 秒...`,
+    skip: '跳过 →',
+    skipWait: (n) => `请等 ${n} 秒...`,
+    couponCodeLabel: '优惠码',
+    couponExpiry: (days) => `${days} 天内有效`,
     closingIn: (n) => `${n} 秒后自动关闭...`,
     learnMore: '了解更多 →',
     brandLabels: {
@@ -151,6 +155,48 @@ const THEMES = {
     wrong: '#8B0000',
     fontStack: '"Comic Sans MS", "Trebuchet MS", sans-serif',
     fontWeight: 800
+  }
+};
+
+// ============================================
+// Coupons — one unique coupon per brand
+// ============================================
+const COUPONS = {
+  apple: {
+    amount: '10% OFF',
+    amountZh: '9 折优惠',
+    headline: 'On your next iPhone',
+    headlineZh: '下次购买 iPhone',
+    code: 'APPLE10',
+    expiryDays: 30,
+    emoji: '🍎'
+  },
+  visa: {
+    amount: '$25 BACK',
+    amountZh: '$25 返现',
+    headline: 'Statement credit on your Visa',
+    headlineZh: 'Visa 卡账单返现',
+    code: 'VISA25',
+    expiryDays: 60,
+    emoji: '💳'
+  },
+  cocacola: {
+    amount: '20% OFF',
+    amountZh: '8 折优惠',
+    headline: 'Your next Coca-Cola order',
+    headlineZh: '下次购买可口可乐',
+    code: 'COKE20',
+    expiryDays: 14,
+    emoji: '🥤'
+  },
+  mcdonalds: {
+    amount: 'FREE Big Mac',
+    amountZh: '免费巨无霸',
+    headline: 'On your next visit',
+    headlineZh: '下次到店使用',
+    code: 'MCDMAC',
+    expiryDays: 7,
+    emoji: '🍔'
   }
 };
 
@@ -947,7 +993,7 @@ function handleAnswer(idx, btn, answersContainer, q) {
     btn.querySelector('.answer-icon').textContent = '✅';
     flashScreen(theme.correct);
     showCorrectOverlay();
-    showContinueButton(goToLanding, 0);
+    showSkipButton(goToLanding, 0);
   } else {
     btn.classList.add('wrong');
     btn.querySelector('.answer-icon').textContent = '❌';
@@ -956,31 +1002,30 @@ function handleAnswer(idx, btn, answersContainer, q) {
     allBtns[q.shuffledCorrectIndex].querySelector('.answer-icon').textContent = '✅';
     flashScreen(theme.wrong);
     showWrongPopup(q.wrongMessage[currentLang]);
-    showContinueButton(goToLanding, 3);
+    showSkipButton(goToLanding, 3);
   }
 }
 
-function showContinueButton(cb, delaySec = 0) {
-  // Remove any existing continue button first
-  document.querySelectorAll('.continue-btn').forEach((b) => b.remove());
+function showSkipButton(cb, delaySec = 0) {
+  // Remove any existing skip button first
+  document.querySelectorAll('.skip-ad-btn').forEach((b) => b.remove());
 
   const btn = document.createElement('button');
-  btn.className = 'continue-btn';
-  btn.textContent = t().continue;
+  btn.className = 'skip-ad-btn';
+  btn.textContent = t().skip;
 
   if (delaySec > 0) {
     btn.disabled = true;
     let n = delaySec;
-    btn.textContent = t().continueWait(n);
-    btn.dataset.intervalId = '';
+    btn.textContent = t().skipWait(n);
     const interval = setInterval(() => {
       n--;
       if (n > 0) {
-        btn.textContent = t().continueWait(n);
+        btn.textContent = t().skipWait(n);
       } else {
         clearInterval(interval);
         btn.disabled = false;
-        btn.textContent = t().continue;
+        btn.textContent = t().skip;
       }
     }, 1000);
   }
@@ -1012,17 +1057,48 @@ function flashScreen(color) {
 
 function showCorrectOverlay() {
   const theme = THEMES[state.set.id] || THEMES.apple;
+  const coupon = COUPONS[state.set.id] || COUPONS.apple;
   const overlay = document.createElement('div');
   overlay.className = 'correct-overlay';
   overlay.style.background = theme.correct;
   // For white correct flash, use dark text; for green use dark text
   const textColor = theme.correct.toLowerCase() === '#ffffff' ? '#1A1A1A' : '#FFFFFF';
+
+  // Build coupon card content
+  const amount = currentLang === 'en' ? coupon.amount : coupon.amountZh;
+  const headline = currentLang === 'en' ? coupon.headline : coupon.headlineZh;
+  const amountText = currentLang === 'en' ? 'CORRECT! 🎯' : t().correct;
+  const rewardText = currentLang === 'en' ? 'You unlocked a reward!' : '恭喜获得奖励!';
+  const codeLabel = t().couponCodeLabel;
+
   overlay.innerHTML = `
-    <div class="correct-check">✅</div>
-    <div class="correct-text" style="color: ${textColor}; text-shadow: 0 0 20px rgba(0,0,0,0.4), 0 4px 0 rgba(0,0,0,0.3);">${t().correct}</div>
+    <div class="correct-burst">${amountText}</div>
+    <div class="coupon-card theme-coupon-${state.set.id}">
+      <div class="coupon-tick coupon-tick-left"></div>
+      <div class="coupon-tick coupon-tick-right"></div>
+      <div class="coupon-top">
+        <div class="coupon-emoji">${coupon.emoji}</div>
+        <div class="coupon-brand">${t().brandLabels[state.set.id]}</div>
+      </div>
+      <div class="coupon-reward">${rewardText}</div>
+      <div class="coupon-amount">${amount}</div>
+      <div class="coupon-headline">${headline}</div>
+      <div class="coupon-divider">
+        <span class="coupon-divider-line"></span>
+        <span class="coupon-divider-icon">✂</span>
+        <span class="coupon-divider-line"></span>
+      </div>
+      <div class="coupon-bottom">
+        <div class="coupon-code-block">
+          <div class="coupon-code-label">${codeLabel}</div>
+          <div class="coupon-code">${coupon.code}</div>
+        </div>
+        <div class="coupon-expiry">⏱ ${t().couponExpiry(coupon.expiryDays)}</div>
+      </div>
+    </div>
   `;
   document.getElementById('app').appendChild(overlay);
-  // Stays on screen until user clicks the Continue button (no auto-navigate)
+  // Stays on screen until user clicks the Skip button (no auto-navigate)
 }
 
 function showWrongPopup(message) {
