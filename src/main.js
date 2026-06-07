@@ -19,12 +19,10 @@ const I18N = {
     skipAdActive: 'Skip Ad →',
     back: '← Back',
     noAds: 'No .webp files found.\nAdd some to the /ads folder!',
-    questionTag: '⚡ QUESTION {n} / 3',
-    nextBtn: 'Got it, next question →',
+    readCarefully: (n) => `Read carefully... ${n}`,
     wrongTitle: '❌ WRONG!',
     correct: 'CORRECT! 🎯',
-    perfect: 'PERFECT SCORE! 🏆',
-    learnMore: 'Learn More →',
+    closingIn: (n) => `Auto-closing in ${n}...`,
     brandLabels: {
       apple: 'Apple',
       visa: 'Visa',
@@ -37,7 +35,6 @@ const I18N = {
       cocacola: 'Open Happiness. And a little history.',
       mcdonalds: "I'm Lovin' It. And now you get why."
     },
-    scoreText: (n) => `You got ${n}/3 correct! 🏆`,
     urgentBanner: '⚡ LIMITED TIME • WIN BIG ⚡'
   },
   zh: {
@@ -49,12 +46,10 @@ const I18N = {
     skipAdActive: '跳过广告 →',
     back: '← 返回',
     noAds: '未找到 .webp 文件。\n请将广告图片添加到 /ads 文件夹!',
-    questionTag: '⚡ 第 {n} 题 / 共 3 题',
-    nextBtn: '知道了，下一题 →',
+    readCarefully: (n) => `仔细看题目... ${n}`,
     wrongTitle: '❌ 答错了!',
     correct: '答对了! 🎯',
-    perfect: '满分! 🏆',
-    learnMore: '了解更多 →',
+    closingIn: (n) => `${n} 秒后自动关闭...`,
     brandLabels: {
       apple: '苹果',
       visa: 'Visa',
@@ -67,7 +62,6 @@ const I18N = {
       cocacola: '畅爽开怀。还有一点小历史。',
       mcdonalds: '我就喜欢。现在你懂了吧。'
     },
-    scoreText: (n) => `你答对了 ${n}/3 题! 🏆`,
     urgentBanner: '⚡ 限时活动 • 大奖来袭 ⚡'
   }
 };
@@ -87,66 +81,87 @@ const QUESTION_SETS = [
     id: 'apple',
     questions: [
       {
-        text: { en: 'What year did iPhone launch?', zh: 'iPhone 是哪一年发布的?' },
-        answers: ['2007', '2010', '2005', '2012'],
-        correctIndex: 0,
+        text: {
+          en: "You're on a date and want the best low-light selfie. Which phone makes you look like a professional photographer?",
+          zh: '你正在约会,想拍出最好看的暗光自拍照。哪款手机能让你拍出专业摄影师的感觉?'
+        },
+        answers: ['Samsung Galaxy', 'Google Pixel', 'iPhone 15 Pro', 'Xiaomi 14'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Come on! Everyone knows iPhone launched in 2007! 📱🍎',
-          zh: '拜托!大家都知道 iPhone 是 2007 年发布的!📱🍎'
+          en: "iPhone 15 Pro's camera was rated #1 for portraits in 2024 — your date deserved better! �😬",
+          zh: 'iPhone 15 Pro 的相机在 2024 年被评为人像之王——你的约会对象值得更好的!�😬'
         }
       },
       {
-        text: { en: 'What material is iPhone 15 Pro made of?', zh: 'iPhone 15 Pro 是什么材质?' },
-        answers: ['Titanium', 'Aluminum', 'Steel', 'Carbon fiber'],
-        correctIndex: 0,
+        text: {
+          en: "Your friend bets you $50 that no phone can shoot 4K video in the dark. You pull out your iPhone and...",
+          zh: '朋友跟你打赌 50 美元,说没有手机能在暗光下拍 4K 视频。你掏出 iPhone,然后...'
+        },
+        answers: ['Lose the bet', 'Win easily', 'The phone crashes', 'It shoots 1080p only'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Nope! Titanium is what makes the Pro feel so premium! 💎',
-          zh: '错啦!钛金属才是 Pro 机型手感高级的秘诀!💎'
+          en: "iPhone shoots cinematic 4K even at night. You just lost $50! 🎬�",
+          zh: 'iPhone 即使在夜里也能拍电影级 4K 视频。你输了 50 块!🎬�'
         }
       },
       {
-        text: { en: 'Apple chip in iPhone 15?', zh: 'iPhone 15 用的是什么芯片?' },
-        answers: ['A17 Pro', 'A15', 'M2', 'A16'],
-        correctIndex: 0,
+        text: {
+          en: "You're at a concert, battery at 5%. Which phone's low-power mode lasts the longest to catch the finale?",
+          zh: '你在听演唱会,电量只剩 5%。哪款手机的低电量模式最耐用,能撑到你听完最后一首歌?'
+        },
+        answers: ['Android average', 'iPhone 15', 'Old Nokia', 'Huawei'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Wrong! The A17 Pro is the chip that powers the iPhone 15! ⚡',
-          zh: '错啦!驱动 iPhone 15 的是 A17 Pro 芯片!⚡'
+          en: "iPhone's optimized battery in low-power mode outlasts the competition. You missed the finale! 🎵😭",
+          zh: 'iPhone 的低电量模式优化极强,撑得比谁都久。你错过了最后一首歌!🎵😭'
         }
       },
       {
-        text: { en: 'How many cameras on iPhone 15 Pro Max?', zh: 'iPhone 15 Pro Max 有几个摄像头?' },
-        answers: ['3', '2', '4', '1'],
-        correctIndex: 0,
+        text: {
+          en: "Your boss needs the presentation NOW. Which phone hotspot is most stable under pressure?",
+          zh: '老板现在就要你的演示文稿。哪款手机开热点最稳定?'
+        },
+        answers: ['Any phone works', 'iPhone', 'Depends on carrier', 'Samsung'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Nope! The Pro Max has 3 cameras — wide, ultra-wide, and telephoto! 📸',
-          zh: '错啦!Pro Max 有 3 个摄像头——广角、超广角和长焦!📸'
+          en: "iPhone's hotspot stability is legendary in the industry. Your boss is not happy! 💼�",
+          zh: 'iPhone 热点的稳定性业内传奇。你老板不高兴了!💼�'
         }
       },
       {
-        text: { en: "Apple's operating system?", zh: '苹果的操作系统叫什么?' },
-        answers: ['iOS', 'Android', 'HarmonyOS', 'Windows'],
-        correctIndex: 0,
+        text: {
+          en: "You drop your phone in a pool. Which one survives?",
+          zh: '你把手机掉进游泳池了。哪款能活下来?'
+        },
+        answers: ['Most phones', 'iPhone 15', 'Cheap Android', 'Depends on case'],
+        correctIndex: 1,
         wrongMessage: {
-          en: "Wrong! Apple's OS is iOS — that's the whole ecosystem! 🍎",
-          zh: '错啦!苹果的系统叫 iOS——这可是整个生态!🍎'
+          en: 'iPhone 15 has IP68 rating — survives 6 meters underwater for 30 minutes. Splash! 💦📱',
+          zh: 'iPhone 15 是 IP68 防水——在 6 米深的水下撑 30 分钟没问题!💦📱'
         }
       },
       {
-        text: { en: 'First iPhone with Face ID?', zh: '第一款带 Face ID 的 iPhone 是?' },
-        answers: ['iPhone X', 'iPhone 8', 'iPhone 11', 'iPhone 6'],
-        correctIndex: 0,
+        text: {
+          en: "You want to share a huge video file instantly with your friend nearby. What's faster than Bluetooth and WiFi combined?",
+          zh: '你想把一个超大视频文件秒传给旁边的朋友。什么比蓝牙和 WiFi 加起来还快?'
+        },
+        answers: ['Email it', 'AirDrop on iPhone', 'USB cable', 'Google Drive'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Nope! iPhone X was the first with Face ID in 2017! 😎',
-          zh: '错啦!iPhone X 是 2017 年第一款带 Face ID 的手机!😎'
+          en: "AirDrop transfers a 1GB video in seconds. You wasted 10 minutes emailing it! �⚡",
+          zh: 'AirDrop 几秒传完 1GB 视频。你发邮件浪费了 10 分钟!�⚡'
         }
       },
       {
-        text: { en: 'AirDrop is exclusive to?', zh: 'AirDrop 是哪个设备独有的功能?' },
-        answers: ['Apple devices', 'All phones', 'Android', 'Samsung only'],
-        correctIndex: 0,
+        text: {
+          en: "Your earbuds connect automatically the second you open the case. Which ecosystem does this perfectly?",
+          zh: '你一打开耳机盒,耳机就自动连上了。哪个生态有这种神仙体验?'
+        },
+        answers: ['Any brand', 'Apple AirPods + iPhone', 'Samsung buds', 'Sony earbuds'],
+        correctIndex: 1,
         wrongMessage: {
-          en: "Wrong! AirDrop is an Apple-only feature — that's the ecosystem! ✨",
-          zh: '错啦!AirDrop 是苹果专属功能——这就是生态的厉害之处!✨'
+          en: "AirPods + iPhone magic connection is unmatched. Everyone else is still pairing manually! 🎧✨",
+          zh: 'AirPods 配 iPhone 的秒连体验无人能敌。其他品牌还在手动配对!🎧✨'
         }
       }
     ]
@@ -155,66 +170,87 @@ const QUESTION_SETS = [
     id: 'visa',
     questions: [
       {
-        text: { en: 'Visa operates in how many countries?', zh: 'Visa 在多少个国家可以使用?' },
-        answers: ['200+', '50', '100', '150'],
-        correctIndex: 0,
+        text: {
+          en: "You're stranded abroad with no cash. Which card works in the most countries worldwide?",
+          zh: '你在国外没现金了,一筹莫展。哪张卡在全球用得最广?'
+        },
+        answers: ['Mastercard', 'Visa', 'AmEx', 'Local debit card'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Wrong! Visa works in 200+ countries — that\'s almost everywhere on Earth! 🌍💳',
-          zh: '错啦!Visa 在 200 多个国家都能用——几乎覆盖全球!🌍💳'
+          en: "Visa works in 200+ countries — more than any other card. You're still stranded! 🌍�",
+          zh: 'Visa 在 200 多个国家都能用——比任何卡都多。你还是困在原地!🌍�'
         }
       },
       {
-        text: { en: 'Visa processes how many transactions per second?', zh: 'Visa 每秒能处理多少笔交易?' },
-        answers: ['65,000', '1,000', '10,000', '500'],
-        correctIndex: 0,
+        text: {
+          en: 'Your card gets stolen in Paris. Which card freezes instantly from your phone in 10 seconds?',
+          zh: '你的卡在巴黎被偷了。哪张卡能让你 10 秒内在手机上把它冻结?'
+        },
+        answers: ['Cash only', 'Visa via app', 'Call the bank', 'Cancel manually'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Nope! 65,000 transactions per second — faster than you can blink! ⚡',
-          zh: '错啦!每秒 65,000 笔交易——比你眨眼还快!⚡'
+          en: "Visa's app lets you freeze your card instantly. Your money was already gone! 💳❄️",
+          zh: 'Visa 的 APP 可以秒冻结卡片。你的钱已经被刷走了!💳❄️'
         }
       },
       {
-        text: { en: 'Visa was founded in?', zh: 'Visa 成立于哪一年?' },
-        answers: ['1958', '1980', '1970', '1999'],
-        correctIndex: 0,
+        text: {
+          en: "You're buying sneakers online at midnight. Which payment is processed fastest with zero downtime?",
+          zh: '你半夜在抢购球鞋。哪种支付处理速度最快、永不宕机?'
+        },
+        answers: ['Bank transfer', 'Visa', 'Crypto', 'PayPal'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Wrong! Visa has been around since 1958 — over 60 years! 📅',
-          zh: '错啦!Visa 自 1958 年就存在了——已经超过 60 年!📅'
+          en: "Visa processes 65,000 transactions per second — midnight drops are no problem! ⚡�",
+          zh: 'Visa 每秒处理 65,000 笔交易——半夜抢鞋根本不在话下!⚡�'
         }
       },
       {
-        text: { en: "Visa's main competitor?", zh: 'Visa 的主要竞争对手是?' },
-        answers: ['Mastercard', 'PayPal', 'Apple Pay', 'WeChat Pay'],
-        correctIndex: 0,
+        text: {
+          en: 'You land in Tokyo with no yen. Which card works at every convenience store with zero setup?',
+          zh: '你空降东京,身上没日元。哪张卡能不用任何设置,直接在任何便利店刷?'
+        },
+        answers: ['Travel card', 'Visa', 'Local SIM card', 'Travellers cheque'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Nope! Mastercard is Visa\'s biggest rival — they go way back! 💳',
-          zh: '错啦!Mastercard 才是 Visa 最大的对手——老对手了!💳'
+          en: "Visa is accepted at virtually every 7-Eleven in Japan. You went hungry! 🍙�",
+          zh: '日本几乎所有 7-11 都收 Visa。你饿肚子了!🍙�'
         }
       },
       {
-        text: { en: 'What does the Visa hologram protect against?', zh: 'Visa 全息图防的是?' },
-        answers: ['Fraud', 'Scratches', 'Water', 'Hacking'],
-        correctIndex: 0,
+        text: {
+          en: 'Your flight gets cancelled. Which card automatically covers your hotel and rebooking?',
+          zh: '你的航班被取消了。哪张卡能自动报销酒店和改签费?'
+        },
+        answers: ['Any card', 'Visa Infinite', 'Travel insurance only', 'Airline voucher'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Wrong! The hologram is a security feature against fraud! 🔐',
-          zh: '错啦!全息图是防伪的安全功能!🔐'
+          en: "Visa Infinite includes travel protection — your card had your back. Too bad you didn't use it! ✈️�️",
+          zh: 'Visa Infinite 自带旅行保障——本来你的卡能罩着你。可惜你没用!✈️�️'
         }
       },
       {
-        text: { en: 'Visa Infinite gives access to?', zh: 'Visa Infinite 能享受什么服务?' },
-        answers: ['Airport lounges', 'Free flights', 'Hotel upgrades', 'Cash back only'],
-        correctIndex: 0,
+        text: {
+          en: "You're at a street market that only does tap payment. Which card works everywhere contactless?",
+          zh: '你在一个只接受拍卡支付的街边小摊。哪张卡全球都能拍卡?'
+        },
+        answers: ['Only newer cards', 'Visa', 'Only Apple Pay', 'Cash only'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Nope! Visa Infinite unlocks airport lounges worldwide! ✈️',
-          zh: '错啦!Visa Infinite 可以进入全球机场贵宾厅!✈️'
+          en: "Visa contactless works at millions of terminals globally. You missed those handmade souvenirs! 🎪💸",
+          zh: 'Visa 非接触式支付在全球几百万台终端都能用。那些手工艺品你没买成!🎪💸'
         }
       },
       {
-        text: { en: 'Contactless Visa payment limit per tap?', zh: 'Visa 非接触式支付每次上限是?' },
-        answers: ['Varies by country', 'Always $50', 'Always $100', 'No limit'],
-        correctIndex: 0,
+        text: {
+          en: 'You need to split a dinner bill in seconds with 6 people. Which card ecosystem makes it painless?',
+          zh: '你要和 6 个人秒分晚餐账单。哪个卡生态能让你 0 痛感地分账?'
+        },
+        answers: ['Venmo', 'Visa Send', 'Bank transfer', 'Cash collection'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Wrong! The contactless limit actually depends on the country! 🌐',
-          zh: '错啦!非接触式支付限额其实是因国家而异的!🌐'
+          en: "Visa Send lets you split and send money instantly. You spent 20 minutes doing math! �️🧮",
+          zh: 'Visa Send 可以秒分秒转账。你算了 20 分钟!�️🧮'
         }
       }
     ]
@@ -223,66 +259,87 @@ const QUESTION_SETS = [
     id: 'cocacola',
     questions: [
       {
-        text: { en: 'Coca-Cola was invented in?', zh: '可口可乐发明于哪一年?' },
-        answers: ['1886', '1920', '1899', '1950'],
-        correctIndex: 0,
+        text: {
+          en: "It's 40°C outside and you need something ice cold. Which drink has been perfecting refreshment since 1886?",
+          zh: '外面 40 度高温,你急需一杯冰镇解渴的饮料。哪款饮料从 1886 年起就在钻研「清爽」二字?'
+        },
+        answers: ['Pepsi', 'Sprite', 'Coca-Cola', 'Red Bull'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Wrong! Coca-Cola has been refreshing people since 1886! 🥤🎉',
-          zh: '错啦!可口可乐从 1886 年就开始让人畅爽了!🥤🎉'
+          en: "Coca-Cola has been the world's refreshment since 1886. You picked wrong on a hot day! ☀️🥤",
+          zh: '可口可乐自 1886 年起就是「清爽」的代名词。大热天你选错了!☀️🥤'
         }
       },
       {
-        text: { en: 'Secret formula is stored where?', zh: '神秘配方存放在哪里?' },
-        answers: ['Atlanta vault', 'New York safe', 'London bank', 'Online encrypted'],
-        correctIndex: 0,
+        text: {
+          en: "You're hosting a party and want the drink everyone actually finishes. What do you buy?",
+          zh: '你在办派对,想买一款大家都愿意喝光的饮料。买啥?'
+        },
+        answers: ['Juice', 'Water', 'Coca-Cola', 'Iced tea'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Nope! The secret formula is locked in an Atlanta vault — for real! 🔐',
-          zh: '错啦!神秘配方锁在亚特兰大的金库里——真的!🔐'
+          en: "Coca-Cola is the #1 consumed soft drink at parties globally. Your guests left thirsty! 🎉�",
+          zh: '可口可乐是全球派对上消耗最多的软饮。你的客人没喝够!🎉�'
         }
       },
       {
-        text: { en: 'Coca-Cola sells in how many countries?', zh: '可口可乐在多少个国家销售?' },
-        answers: ['200+', '100', '150', '50'],
-        correctIndex: 0,
+        text: {
+          en: "Your friend says 'grab me something from the fridge' at a restaurant. What do they actually want?",
+          zh: '在餐厅朋友跟你说「帮我从冰箱里拿个喝的」,他到底想要啥?'
+        },
+        answers: ['Water', 'Beer', 'Coca-Cola', 'Lemonade'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Wrong! Coke is sold in 200+ countries — almost everywhere! 🌍',
-          zh: '错啦!可口可乐在 200 多个国家有售——几乎全球!🌍'
+          en: "When people say 'grab me a drink' they mean Coca-Cola 70% of the time. You failed your friend! 🙃",
+          zh: '70% 的人说「帮我拿瓶饮料」其实指的就是可口可乐。你辜负了朋友!🙃'
         }
       },
       {
-        text: { en: 'Original Coca-Cola contained?', zh: '最初的可口可乐含有?' },
-        answers: ['Cocaine traces', 'Caffeine only', 'Sugar only', 'Alcohol'],
-        correctIndex: 0,
+        text: {
+          en: 'You need a drink that pairs with literally any food on earth. What wins?',
+          zh: '你需要一款几乎能搭配任何食物的饮料。谁赢?'
+        },
+        answers: ['Wine', 'Beer', 'Coca-Cola', 'Orange juice'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Nope! The original 1886 formula had cocaine traces — they removed it later! 💀',
-          zh: '错啦!1886 年的原始配方含有微量可卡因——后来才去除!💀'
+          en: "Coca-Cola's balance of sweet and acid pairs with everything from pizza to steak. Bold choice! 🍕🥩",
+          zh: '可口可乐的甜酸平衡,从披萨到牛排都能搭。你这搭配相当大胆!🍕🥩'
         }
       },
       {
-        text: { en: 'Coca-Cola color before caramel added?', zh: '添加焦糖色之前,可口可乐是什么颜色?' },
-        answers: ['Green', 'Brown', 'Clear', 'Red'],
-        correctIndex: 0,
+        text: {
+          en: "You spill a drink on a rusty bolt to loosen it. Which drink actually works as a cleaning agent?",
+          zh: '你想用饮料浇在生锈的螺丝上让它松动。哪款饮料真的能当除锈剂?'
+        },
+        answers: ['Water', 'Pepsi', 'Coca-Cola', 'Sprite'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Wrong! Before caramel coloring, the original Coke was actually green! 💚',
-          zh: '错啦!加焦糖色之前,最初的可口可乐其实是绿色的!💚'
+          en: "Coca-Cola's phosphoric acid can loosen rust — it's a life hack AND a drink! �🤯",
+          zh: '可口可乐里的磷酸能除锈——既是饮料,也是生活神器!�🤯'
         }
       },
       {
-        text: { en: 'Most sold Coca-Cola product?', zh: '可口可乐卖得最好的产品是?' },
-        answers: ['Classic Coke', 'Coke Zero', 'Diet Coke', 'Sprite'],
-        correctIndex: 0,
+        text: {
+          en: "You're in a country you've never heard of. Which drink brand is guaranteed to be there?",
+          zh: '你来到了一个听都没听过的国家。哪款饮料品牌一定有售?'
+        },
+        answers: ['Starbucks', 'Red Bull', 'Coca-Cola', 'Pepsi'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Nope! Classic Coke is still the king — the original! 👑',
-          zh: '错啦!经典可乐还是王者——原版!👑'
+          en: 'Coca-Cola is sold in every country except North Korea and Cuba. It beat your geography! 🌍',
+          zh: '除了朝鲜和古巴,全球每个国家都有可口可乐。它比你的地理知识还强!🌍'
         }
       },
       {
-        text: { en: 'Coca-Cola Santa Claus campaign started?', zh: '可口可乐圣诞老人广告始于哪一年?' },
-        answers: ['1931', '1950', '1965', '1920'],
-        correctIndex: 0,
+        text: {
+          en: "It's New Year's Eve and everyone raises a glass. What's in most glasses worldwide?",
+          zh: '跨年夜大家一起举杯,全球大多数人杯子里装的是啥?'
+        },
+        answers: ['Champagne', 'Beer', 'Coca-Cola', 'Juice'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Wrong! The iconic red Santa campaign began in 1931! 🎅',
-          zh: '错啦!标志性的红衣圣诞老人广告始于 1931 年!🎅'
+          en: "Coca-Cola is the world's most consumed New Year's drink. Pop the cap not the cork! �",
+          zh: '可口可乐是全球跨年夜喝得最多的饮料。开瓶盖,而不是开香槟!�'
         }
       }
     ]
@@ -291,66 +348,87 @@ const QUESTION_SETS = [
     id: 'mcdonalds',
     questions: [
       {
-        text: { en: "McDonald's founded in?", zh: '麦当劳创立于哪一年?' },
-        answers: ['1940', '1960', '1955', '1935'],
-        correctIndex: 0,
+        text: {
+          en: "It's 3am, you're starving, nothing is open. Which place is most likely still serving hot food?",
+          zh: '凌晨 3 点,你饿疯了,啥店都关了。哪家最可能还在出热乎饭?'
+        },
+        answers: ['Local diner', 'Pizza place', "McDonald's", 'Sushi bar'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Wrong! McDonald\'s has been flipping burgers since 1940! 🍔👴',
-          zh: '错啦!麦当劳自 1940 年就开始翻汉堡了!🍔👴'
+          en: "McDonald's 24hr locations saved more late night hunger emergencies than anyone. You went to bed hungry! ��",
+          zh: '24 小时麦当劳拯救过无数个深夜饿疯的灵魂。你饿着肚子去睡了!��'
         }
       },
       {
-        text: { en: "McDonald's operates in how many countries?", zh: '麦当劳在多少个国家开店?' },
-        answers: ['100+', '50', '75', '200'],
-        correctIndex: 0,
+        text: {
+          en: "You have 5 minutes before your train. Which restaurant guarantees your food is ready before you finish paying?",
+          zh: '你离火车发车只剩 5 分钟。哪家能保证你还没付完款,饭就到手了?'
+        },
+        answers: ['Subway', 'KFC', "McDonald's", 'Burger King'],
+        correctIndex: 2,
         wrongMessage: {
-          en: "Wrong! McDonald's has 100+ countries of golden arches! 🏳️",
-          zh: '错啦!麦当劳的金色拱门遍布 100 多个国家!🏳️'
+          en: "McDonald's average service time is 3 minutes — the fastest in fast food. You missed your train! 🚂💨",
+          zh: '麦当劳平均出餐 3 分钟——快餐里最快的。你误了火车!🚂💨'
         }
       },
       {
-        text: { en: "Best selling McDonald's item ever?", zh: '麦当劳卖得最好的产品是?' },
-        answers: ['Big Mac', 'McChicken', 'Fries', 'McNuggets'],
-        correctIndex: 0,
+        text: {
+          en: "You're in a foreign country and need familiar food fast. Which restaurant is in 100+ countries?",
+          zh: '你在异国他乡,想快速吃上一口熟悉的味道。哪家在 100 多个国家都有?'
+        },
+        answers: ['Subway', 'KFC', "McDonald's", 'Pizza Hut'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Nope! The Big Mac is the all-time champion! 🍔',
-          zh: '错啦!巨无霸才是永恒的冠军!🍔'
+          en: "McDonald's operates in 100+ countries — your comfort food travels with you! 🌍�",
+          zh: '麦当劳遍布 100 多个国家——熟悉的味道走到哪都有!🌍�'
         }
       },
       {
-        text: { en: 'Golden Arches represent?', zh: '金色拱门代表什么?' },
-        answers: ['Letter M', 'Two hills', 'French fries', 'A bridge'],
-        correctIndex: 0,
+        text: {
+          en: "You're feeding 4 kids under 10 with zero drama. What's the only meal that comes with a toy?",
+          zh: '你要喂 4 个 10 岁以下的小孩,还要全场无哭闹。哪个套餐自带玩具?'
+        },
+        answers: ['Burger King Kids Meal', 'KFC Kids Box', "McDonald's Happy Meal", 'Subway Kids'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Nope! The Golden Arches are literally a giant M — look again! 🏳️',
-          zh: '错啦!金色拱门其实就是一个巨大的 M——再看一眼!🏳️'
+          en: "Happy Meal = happy kids = happy parents. You chose chaos! 🧸😅",
+          zh: '开心乐园餐 = 开心小孩 = 开心家长。你选了混乱!🧸😅'
         }
       },
       {
-        text: { en: "McDonald's Happy Meal launched in?", zh: '麦当劳开心乐园餐是哪年推出的?' },
-        answers: ['1979', '1990', '1985', '1975'],
-        correctIndex: 0,
+        text: {
+          en: "Your friend says 'let's get fries' — where do you go without even discussing it?",
+          zh: '朋友说「走,去吃薯条」——你们心照不宣,直接去哪家?'
+        },
+        answers: ['KFC', 'Five Guys', "McDonald's", 'Burger King'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Wrong! Happy Meal launched in 1979 — the kids loved it! 🎁',
-          zh: '错啦!开心乐园餐 1979 年推出——孩子们超爱!🎁'
+          en: "McDonald's fries are the most recognized fries on earth. No discussion needed! �👑",
+          zh: '麦当劳的薯条是地球上最知名的薯条。根本不用讨论!�👑'
         }
       },
       {
-        text: { en: "First McDonald's country outside USA?", zh: '麦当劳在美国之外开的第一个国家是?' },
-        answers: ['Canada', 'UK', 'Japan', 'France'],
-        correctIndex: 0,
+        text: {
+          en: "You need free WiFi, AC, and a seat for 2 hours with no pressure to leave. Where do you go?",
+          zh: '你需要免费 WiFi、空调、一个能坐 2 小时也不会被赶的位子。去哪里?'
+        },
+        answers: ['Starbucks', 'Library', "McDonald's", 'A park'],
+        correctIndex: 2,
         wrongMessage: {
-          en: 'Nope! Canada was first — our friendly neighbors up north! 🇨🇦',
-          zh: '错啦!第一个是加拿大——北边的友好邻居!🇨🇦'
+          en: "McDonald's McCafé zones are the world's most used free coworking spots. Surprise! 💻☕",
+          zh: '麦当劳的 McCafé 区是全球最常用的免费办公点。惊不惊喜?💻☕'
         }
       },
       {
-        text: { en: "McDonald's serves how many customers daily?", zh: '麦当劳每天接待多少顾客?' },
-        answers: ['69 million', '10 million', '30 million', '50 million'],
-        correctIndex: 0,
+        text: {
+          en: "You want the most ordered burger in human history. What do you ask for?",
+          zh: '你想点人类历史上被点单最多的汉堡。你要啥?'
+        },
+        answers: ['Whopper', 'Big Mac', 'Quarter Pounder', 'McChicken'],
+        correctIndex: 1,
         wrongMessage: {
-          en: 'Wrong! 69 million customers daily — that\'s mind-blowing! 🤯',
-          zh: '错啦!每天 6900 万顾客——难以置信!🤯'
+          en: "The Big Mac has sold billions since 1968 — it's the most iconic burger ever made. 🍔👴",
+          zh: '巨无霸自 1968 年起已经卖出了几十亿个——史上最具代表性的汉堡!🍔👴'
         }
       }
     ]
@@ -404,6 +482,11 @@ let state = {
 const app = () => document.getElementById('app');
 
 function render() {
+  // Clear any running countdown interval from a previous render
+  if (state.countdownInterval) {
+    clearInterval(state.countdownInterval);
+    state.countdownInterval = null;
+  }
   const root = app();
   root.innerHTML = '';
   // Always include the flash overlay at the top
@@ -498,11 +581,13 @@ function renderOldAds(root) {
 
 function startNewAds() {
   state.set = QUESTION_SETS[Math.floor(Math.random() * QUESTION_SETS.length)];
-  const selected = pickRandom(state.set.questions, 3);
+  const selected = pickRandom(state.set.questions, 1);
   state.questions = selected.map(shuffleAnswers);
   state.currentQuestion = 0;
   state.score = 0;
   state.answering = false;
+  state.questionLocked = true;
+  state.countdownInterval = null;
 }
 
 function renderNewAds(root) {
@@ -515,43 +600,27 @@ function renderQuestion(root) {
   const wrap = document.createElement('div');
   wrap.className = 'new-ads';
 
-  // Progress bar
-  const progress = document.createElement('div');
-  progress.className = 'progress-bar';
-  for (let i = 0; i < 3; i++) {
-    const seg = document.createElement('div');
-    seg.className = 'progress-segment';
-    if (i < state.currentQuestion) seg.classList.add('done');
-    else if (i === state.currentQuestion) seg.classList.add('active');
-    progress.appendChild(seg);
-  }
-  wrap.appendChild(progress);
-
   // Brand header
   const header = document.createElement('div');
   header.className = 'brand-header';
   header.innerHTML = `
-    <button class="back-arrow" id="backBtn">←</button>
     <div class="brand-subtitle left">⚡ ${t().urgentBanner.split('•')[0].trim()}</div>
     <div class="brand-logo">${t().brandLabels[state.set.id]}</div>
     <div class="brand-subtitle right">${t().urgentBanner.split('•')[1]?.trim() || ''}</div>
   `;
   wrap.appendChild(header);
 
-  header.querySelector('#backBtn').addEventListener('click', () => {
-    state.view = 'landing';
-    render();
-  });
-
   // Question area
   const area = document.createElement('div');
   area.className = 'question-area';
   const q = state.questions[state.currentQuestion];
 
-  const tag = document.createElement('div');
-  tag.className = 'question-tag';
-  tag.innerHTML = t().questionTag.replace('{n}', state.currentQuestion + 1);
-  area.appendChild(tag);
+  // Countdown (above the question, shown while locked)
+  const countdown = document.createElement('div');
+  countdown.className = 'read-countdown';
+  countdown.id = 'readCountdown';
+  countdown.textContent = t().readCarefully(3);
+  area.appendChild(countdown);
 
   const qText = document.createElement('div');
   qText.className = 'question-text';
@@ -560,15 +629,17 @@ function renderQuestion(root) {
 
   const answers = document.createElement('div');
   answers.className = 'answers';
+  answers.id = 'answersContainer';
 
   q.shuffledAnswers.forEach((ans, idx) => {
     const btn = document.createElement('button');
-    btn.className = 'answer-btn';
+    btn.className = 'answer-btn locked';
+    btn.disabled = true;
     const letter = ['A', 'B', 'C', 'D'][idx];
     btn.innerHTML = `
       <span class="answer-letter">${letter}</span>
       <span class="answer-text">${ans.text}</span>
-      <span class="answer-icon">⚡</span>
+      <span class="answer-icon">🔒</span>
     `;
     btn.addEventListener('click', () => handleAnswer(idx, btn, answers, q));
     answers.appendChild(btn);
@@ -577,11 +648,51 @@ function renderQuestion(root) {
 
   wrap.appendChild(area);
   root.appendChild(wrap);
+
+  // Start 3-second countdown
+  startQuestionCountdown(answers, countdown);
+}
+
+function startQuestionCountdown(answersContainer, countdownEl) {
+  let n = 3;
+  state.questionLocked = true;
+  countdownEl.textContent = t().readCarefully(n);
+
+  state.countdownInterval = setInterval(() => {
+    n--;
+    if (n > 0) {
+      countdownEl.textContent = t().readCarefully(n);
+    } else {
+      clearInterval(state.countdownInterval);
+      state.countdownInterval = null;
+      state.questionLocked = false;
+      // Unlock buttons
+      countdownEl.classList.add('done');
+      countdownEl.textContent = '👆 Pick now!';
+      const btns = answersContainer.querySelectorAll('.answer-btn');
+      btns.forEach((b) => {
+        b.disabled = false;
+        b.classList.remove('locked');
+        b.querySelector('.answer-icon').textContent = '⚡';
+      });
+    }
+  }, 1000);
 }
 
 function handleAnswer(idx, btn, answersContainer, q) {
   if (state.answering) return;
+  if (state.questionLocked) return;
   state.answering = true;
+
+  // Clear any running countdown
+  if (state.countdownInterval) {
+    clearInterval(state.countdownInterval);
+    state.countdownInterval = null;
+  }
+
+  // Lock all buttons
+  const allBtns = answersContainer.querySelectorAll('.answer-btn');
+  allBtns.forEach((b) => (b.disabled = true));
 
   const isCorrect = idx === q.shuffledCorrectIndex;
 
@@ -589,31 +700,27 @@ function handleAnswer(idx, btn, answersContainer, q) {
     state.score++;
     btn.classList.add('correct');
     btn.querySelector('.answer-icon').textContent = '✅';
-    // Flash gold
     flashScreen('gold');
     showCorrectOverlay(() => {
-      advanceQuestion();
+      goToLanding();
     });
   } else {
     btn.classList.add('wrong');
     btn.querySelector('.answer-icon').textContent = '❌';
-    // Mark correct
-    const allBtns = answersContainer.querySelectorAll('.answer-btn');
+    // Highlight the correct one
     allBtns[q.shuffledCorrectIndex].classList.add('correct');
     allBtns[q.shuffledCorrectIndex].querySelector('.answer-icon').textContent = '✅';
     flashScreen('red');
     showWrongPopup(q.wrongMessage[currentLang], () => {
-      advanceQuestion();
+      goToLanding();
     });
   }
 }
 
-function advanceQuestion() {
+function goToLanding() {
+  state.view = 'landing';
   state.answering = false;
-  state.currentQuestion++;
-  if (state.currentQuestion >= 3) {
-    state.view = 'end';
-  }
+  state.questionLocked = false;
   render();
 }
 
@@ -647,14 +754,23 @@ function showWrongPopup(message, cb) {
     <div class="wrong-popup">
       <div class="wrong-title">${t().wrongTitle}</div>
       <div class="wrong-message">${message}</div>
-      <button class="next-btn" id="nextBtn">${t().nextBtn}</button>
+      <div class="popup-countdown" id="popupCountdown">${t().closingIn(3)}</div>
     </div>
   `;
   document.getElementById('app').appendChild(backdrop);
-  backdrop.querySelector('#nextBtn').addEventListener('click', () => {
-    backdrop.remove();
-    cb();
-  });
+
+  let n = 3;
+  const cdEl = backdrop.querySelector('#popupCountdown');
+  const interval = setInterval(() => {
+    n--;
+    if (n > 0) {
+      cdEl.textContent = t().closingIn(n);
+    } else {
+      clearInterval(interval);
+      backdrop.remove();
+      cb();
+    }
+  }, 1000);
 }
 
 function renderEnd(root) {
