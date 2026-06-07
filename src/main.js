@@ -3,7 +3,7 @@
 // ============================================
 
 // Load ad images via Vite glob
-const adModules = import.meta.glob('../../ads/*.webp', { eager: true });
+const adModules = import.meta.glob('../ads/*.webp', { eager: true });
 const adImages = Object.values(adModules).map((m) => m.default || m);
 
 // ============================================
@@ -17,6 +17,7 @@ const I18N = {
     newAds: 'New Ads 🎮',
     skipAd: 'Skip Ad',
     skipAdActive: 'Skip Ad →',
+    skipAdWait: (n) => `Skip Ad in ${n}s...`,
     back: '← Back',
     noAds: 'No .webp files found.\nAdd some to the /ads folder!',
     readCarefully: (n) => `Read carefully... ${n}`,
@@ -53,6 +54,7 @@ const I18N = {
     newAds: '互动广告 🎮',
     skipAd: '跳过广告',
     skipAdActive: '跳过广告 →',
+    skipAdWait: (n) => `${n} 秒后可跳过...`,
     back: '← 返回',
     noAds: '未找到 .webp 文件。\n请将广告图片添加到 /ads 文件夹!',
     readCarefully: (n) => `仔细阅读... ${n}`,
@@ -808,16 +810,7 @@ function renderOldAds(root) {
   const wrap = document.createElement('div');
   wrap.className = 'old-ads';
 
-  // Back button
-  const back = document.createElement('button');
-  back.className = 'skip-btn-back';
-  back.textContent = t().back;
-  back.addEventListener('click', () => {
-    state.view = 'landing';
-    render();
-  });
-  wrap.appendChild(back);
-
+  // Ad content
   if (adImages.length === 0) {
     const msg = document.createElement('div');
     msg.className = 'placeholder-msg';
@@ -832,22 +825,39 @@ function renderOldAds(root) {
     wrap.appendChild(img);
   }
 
-  // Skip button
+  // Real-ad style skip button (top right)
   const skip = document.createElement('button');
-  skip.className = 'skip-btn';
-  skip.textContent = t().skipAd;
+  skip.className = 'ad-skip';
   skip.disabled = true;
+
+  let countdown = 5;
+  const updateSkipText = () => {
+    if (countdown > 0) {
+      skip.innerHTML = t().skipAdWait(countdown);
+    } else {
+      skip.textContent = t().skipAdActive;
+    }
+  };
+  updateSkipText();
   wrap.appendChild(skip);
 
-  setTimeout(() => {
-    skip.textContent = t().skipAdActive;
-    skip.classList.add('active');
-    skip.disabled = false;
-    skip.addEventListener('click', () => {
-      state.view = 'landing';
-      render();
-    });
-  }, 5000);
+  const countdownInterval = setInterval(() => {
+    countdown--;
+    if (countdown > 0) {
+      updateSkipText();
+    } else {
+      clearInterval(countdownInterval);
+      updateSkipText();
+      skip.classList.add('ready');
+      skip.disabled = false;
+    }
+  }, 1000);
+
+  skip.addEventListener('click', () => {
+    clearInterval(countdownInterval);
+    state.view = 'landing';
+    render();
+  });
 
   root.appendChild(wrap);
 }
