@@ -26,6 +26,8 @@ const I18N = {
     gotItCorrect: 'You got it correct! 🏆',
     gotItWrong: 'You got it wrong 😅',
     gotIt: 'Got it',
+    continue: 'Continue →',
+    continueWait: (n) => `Wait ${n}s...`,
     closingIn: (n) => `Auto-closing in ${n}...`,
     learnMore: 'Learn More →',
     brandLabels: {
@@ -55,9 +57,11 @@ const I18N = {
     pickNow: '👆 现在选!',
     wrongTitle: '❌ 答错了!',
     correct: '正确! 🎯',
-    gotItCorrect: '你答对了! �',
+    gotItCorrect: '你答对了! 🏆',
     gotItWrong: '答错了 😅',
     gotIt: '明白了',
+    continue: '继续 →',
+    continueWait: (n) => `请等 ${n} 秒...`,
     closingIn: (n) => `${n} 秒后自动关闭...`,
     learnMore: '了解更多 →',
     brandLabels: {
@@ -942,9 +946,8 @@ function handleAnswer(idx, btn, answersContainer, q) {
     btn.classList.add('correct');
     btn.querySelector('.answer-icon').textContent = '✅';
     flashScreen(theme.correct);
-    showCorrectOverlay(() => {
-      goToLanding();
-    });
+    showCorrectOverlay();
+    showContinueButton(goToLanding, 0);
   } else {
     btn.classList.add('wrong');
     btn.querySelector('.answer-icon').textContent = '❌';
@@ -952,10 +955,41 @@ function handleAnswer(idx, btn, answersContainer, q) {
     allBtns[q.shuffledCorrectIndex].classList.add('correct');
     allBtns[q.shuffledCorrectIndex].querySelector('.answer-icon').textContent = '✅';
     flashScreen(theme.wrong);
-    showWrongPopup(q.wrongMessage[currentLang], () => {
-      goToLanding();
-    });
+    showWrongPopup(q.wrongMessage[currentLang]);
+    showContinueButton(goToLanding, 3);
   }
+}
+
+function showContinueButton(cb, delaySec = 0) {
+  // Remove any existing continue button first
+  document.querySelectorAll('.continue-btn').forEach((b) => b.remove());
+
+  const btn = document.createElement('button');
+  btn.className = 'continue-btn';
+  btn.textContent = t().continue;
+
+  if (delaySec > 0) {
+    btn.disabled = true;
+    let n = delaySec;
+    btn.textContent = t().continueWait(n);
+    btn.dataset.intervalId = '';
+    const interval = setInterval(() => {
+      n--;
+      if (n > 0) {
+        btn.textContent = t().continueWait(n);
+      } else {
+        clearInterval(interval);
+        btn.disabled = false;
+        btn.textContent = t().continue;
+      }
+    }, 1000);
+  }
+
+  btn.addEventListener('click', () => {
+    btn.remove();
+    cb();
+  });
+  document.getElementById('app').appendChild(btn);
 }
 
 function goToLanding() {
@@ -976,7 +1010,7 @@ function flashScreen(color) {
   }, 400);
 }
 
-function showCorrectOverlay(cb) {
+function showCorrectOverlay() {
   const theme = THEMES[state.set.id] || THEMES.apple;
   const overlay = document.createElement('div');
   overlay.className = 'correct-overlay';
@@ -988,36 +1022,20 @@ function showCorrectOverlay(cb) {
     <div class="correct-text" style="color: ${textColor}; text-shadow: 0 0 20px rgba(0,0,0,0.4), 0 4px 0 rgba(0,0,0,0.3);">${t().correct}</div>
   `;
   document.getElementById('app').appendChild(overlay);
-  setTimeout(() => {
-    overlay.remove();
-    cb();
-  }, 1500);
+  // Stays on screen until user clicks the Continue button (no auto-navigate)
 }
 
-function showWrongPopup(message, cb) {
+function showWrongPopup(message) {
   const backdrop = document.createElement('div');
   backdrop.className = 'wrong-popup-backdrop';
   backdrop.innerHTML = `
     <div class="wrong-popup">
       <div class="wrong-title">${t().wrongTitle}</div>
       <div class="wrong-message">${message}</div>
-      <div class="popup-countdown" id="popupCountdown">${t().closingIn(3)}</div>
     </div>
   `;
   document.getElementById('app').appendChild(backdrop);
-
-  let n = 3;
-  const cdEl = backdrop.querySelector('#popupCountdown');
-  const interval = setInterval(() => {
-    n--;
-    if (n > 0) {
-      cdEl.textContent = t().closingIn(n);
-    } else {
-      clearInterval(interval);
-      backdrop.remove();
-      cb();
-    }
-  }, 1000);
+  // Stays on screen until user clicks the Continue button (no auto-navigate)
 }
 
 // ============================================

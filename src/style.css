@@ -606,6 +606,47 @@ html, body {
 }
 
 /* ============================================
+   CONTINUE BUTTON (top right after answering)
+   ============================================ */
+.continue-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  z-index: 9500;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  letter-spacing: 0.02em;
+  transition: transform 0.1s, background 0.15s, opacity 0.15s;
+  font-family: inherit;
+  min-width: 130px;
+  text-align: center;
+}
+
+.continue-btn:hover:not(:disabled) {
+  background: #000000;
+  transform: translateY(-1px);
+}
+
+.continue-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.continue-btn:disabled {
+  background: #999999;
+  color: #EEEEEE;
+  cursor: not-allowed;
+  opacity: 0.85;
+  box-shadow: none;
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 @media (max-width: 480px) {
