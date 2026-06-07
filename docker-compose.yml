@@ -1,0 +1,23 @@
+# ============================================
+# AdQuest — Playable Ads
+# Localhost-only deployment on port 9393
+# ============================================
+
+services:
+  adquest:
+    container_name: adquest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: adquest:latest
+
+    # Host port 9393 → container port 9393 (vite preview)
+    ports:
+      - "9393:9393"
+
+    restart: always
+
+    # Mount the local /ads folder into the build output so the user
+    # can drop new .webp creatives in without rebuilding the image.
+    volumes:
+      - ./ads:/app/dist/ads
