@@ -1061,6 +1061,8 @@ function showCorrectOverlay() {
   const overlay = document.createElement('div');
   overlay.className = 'correct-overlay';
   overlay.style.background = theme.correct;
+  // Expose the overlay bg color so the coupon's side notches can match it
+  overlay.style.setProperty('--overlay-bg', theme.correct);
   // For white correct flash, use dark text; for green use dark text
   const textColor = theme.correct.toLowerCase() === '#ffffff' ? '#1A1A1A' : '#FFFFFF';
 

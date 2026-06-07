@@ -692,7 +692,7 @@ html, body {
   right: -14px;
 }
 .coupon-card .coupon-tick {
-  background: var(--overlay-bg, #34C759);
+  background: var(--coupon-accent, #1A1A1A);
 }
 
 .coupon-top {
